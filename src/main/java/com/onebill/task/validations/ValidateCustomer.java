@@ -33,6 +33,7 @@ public class ValidateCustomer {
 			errors.add(constraintViolation.getMessage());
 		}
 		if (customer.getDateOfBirth() == null || customer.getDateOfBirth().isAfter(LocalDate.now())) {
+			System.out.println(customer.getDateOfBirth());
 			errors.add("Date of Birth should not be null please check the date");
 		}
 		if (customer.getEmails().size() != 0) {

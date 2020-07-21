@@ -20,14 +20,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
+
+import com.onebill.task.TestConfig;
 import com.onebill.task.dao.CustomerDAO;
 import com.onebill.task.dto.Addresses;
 import com.onebill.task.dto.CustomerDetails;
 import com.onebill.task.dto.CustomerDocuments;
 import com.onebill.task.dto.Emails;
 import com.onebill.task.dto.MobileNumbers;
+import com.onebill.task.validations.ValidateCustomer;
 
-@ContextConfiguration(classes = {SpringBootTest.class})
+@ContextConfiguration(classes = {SpringBootTest.class, TestConfig.class})
 @WebMvcTest
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 class CustomerServiceImplTest {
@@ -38,15 +41,18 @@ class CustomerServiceImplTest {
 	@Mock
 	CustomerDAO dao;
 	
+	@Mock
+	ValidateCustomer validate;
+	
 	private static CustomerDetails customer;
 	
 	
 	@BeforeAll
 	static void  sampleCustomer() {
 		customer = new CustomerDetails();
-		customer.setCustomerId(1);
 		customer.setFirstName("John");
 		customer.setLastName("Whick");
+		customer.setDateOfBirth(LocalDate.now());
 		LocalDate dateOfBirth = LocalDate.parse("1983-02-11");
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); 
 		dateOfBirth = LocalDate.parse(formatter.format(dateOfBirth));
@@ -79,6 +85,7 @@ class CustomerServiceImplTest {
 
 	@Test
 	void testCreateCustomer() {
+		when(validate.validateCustomer(customer)).thenReturn(true);
 		when(dao.createCustomer(any(CustomerDetails.class), any(CustomerDocuments.class))).thenReturn(true);
 		boolean actual=service.createCustomer(customer, new CustomerDocuments());
 		assertEquals(true, actual);
@@ -119,17 +126,42 @@ class CustomerServiceImplTest {
 	
 	@Test
 	void testUpdateCustomer() {
-		CustomerDetails cust = new CustomerDetails();
-		cust.setCustomerId(1);
-		cust.setFirstName("Jonas");
-		cust.setLastName("Tiedeman");
-		LocalDate dateOfBirth = LocalDate.parse("1993-02-11");
+		customer = new CustomerDetails();
+		customer.setCustomerId(1);
+		customer.setFirstName("Jonas");
+		customer.setLastName("Tiedeman");
+		LocalDate dateOfBirth = LocalDate.parse("1983-03-11");
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); 
 		dateOfBirth = LocalDate.parse(formatter.format(dateOfBirth));
-		cust.setDateOfBirth(dateOfBirth);
-		when(dao.updateCustomer(cust, cust.getDocuments())).thenReturn(cust);
-		CustomerDetails actual = service.updateCustomer(cust, cust.getDocuments());
-		assertEquals(cust.getFirstName(), actual.getFirstName());
+        customer.setDateOfBirth(dateOfBirth);
+		List<Addresses> addresses = new ArrayList<Addresses>();
+		Addresses addr1 = new Addresses();
+		addr1.setCountry("Inida");
+		addr1.setCity("Kurnool");
+		addr1.setLine1("Kummari Street");
+		addr1.setLine2("One Town");
+		addr1.setPincode(132323);
+		addr1.setState("Andhra Pradesh");
+		addr1.setCustomer(customer);
+		addresses.add(addr1);
+		List<MobileNumbers> phoneNumbers = new ArrayList<MobileNumbers>();
+		MobileNumbers number = new MobileNumbers();
+		number.setMobileNumber(8388263760l);
+		number.setCustomer(customer);
+		phoneNumbers.add(number);
+		List<Emails> emails = new ArrayList<Emails>();
+		Emails email = new Emails();
+		email.setEmail("honas@gmail.com");
+		email.setCustomer(customer);
+		emails.add(email);
+		customer.setAddresses(addresses);
+		customer.setEmails(emails);
+		customer.setPhoneNumbers(phoneNumbers);	
+		when(validate.validateCustomer(customer)).thenReturn(true);
+		when(dao.updateCustomer(customer, customer.getDocuments())).thenReturn(customer);
+		CustomerDetails actual = service.updateCustomer(customer, customer.getDocuments());
+		System.out.println(actual);
+		assertEquals(customer.getFirstName(), actual.getFirstName());
 	}
 	
 	@Test
