@@ -41,12 +41,14 @@ public class CustomerDAOImpl implements CustomerDAO {
 			address.setCustomer(details);
 		}
 		for (MobileNumbers mobileNumber : details.getPhoneNumbers()) {
+			if(mobileNumber.getMobileNumber() != null) {
 			if(mobileNums.size() != 0) {
 				for (MobileNumbers number : mobileNums) {
 					if(number.getMobileNumber().toString().equals(mobileNumber.getMobileNumber().toString())) {
 						throw new MobileNumberAlreadyExistsException();
 					}
 				}
+			}
 			}
 			mobileNumber.setCustomer(details);
 		}

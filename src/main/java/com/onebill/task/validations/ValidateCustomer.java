@@ -31,7 +31,6 @@ public class ValidateCustomer {
 		Set<ConstraintViolation<CustomerDetails>> contrains = validator.validate(customer);
 		for (ConstraintViolation<CustomerDetails> constraintViolation : contrains) {
 			errors.add(constraintViolation.getMessage());
-			System.out.println(constraintViolation.getMessage());
 		}
 		if (customer.getDateOfBirth() == null || customer.getDateOfBirth().isAfter(LocalDate.now())) {
 			errors.add("Date of Birth should not be null please check the date");
@@ -51,16 +50,18 @@ public class ValidateCustomer {
 		if (customer.getPhoneNumbers().size() != 0) {
 			boolean isNotValid = false;
 			for (MobileNumbers number : customer.getPhoneNumbers()) {
-				
-				String regExp = "(0/91)?[7-9][0-9]{9}";
-				Pattern pattern = Pattern.compile(regExp);
-				Matcher matcher = pattern.matcher(number.getMobileNumber().toString());
-				if(matcher.matches()) {
-					isNotValid = true;
-				}
-				if (!isNotValid) {
-					errors.add("Please Enter Valid Number");
-				}
+				System.out.println(number.getMobileNumber());
+				if(number.getMobileNumber() != null) {
+					String regExp = "(0/91)?[7-9][0-9]{9}";
+					Pattern pattern = Pattern.compile(regExp);
+					Matcher matcher = pattern.matcher(number.getMobileNumber().toString());
+					if(matcher.matches()) {
+						isNotValid = true;
+					}
+					if (!isNotValid) {
+						errors.add("Please Enter Valid Number");
+					}
+				}	
 			}
 		}
 		if (errors.size() > 0) {
