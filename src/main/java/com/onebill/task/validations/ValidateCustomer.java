@@ -50,7 +50,7 @@ public class ValidateCustomer {
 		if (customer.getPhoneNumbers().size() != 0) {
 			boolean isNotValid = false;
 			for (MobileNumbers number : customer.getPhoneNumbers()) {
-				System.out.println(number.getMobileNumber());
+//				System.out.println(number.getMobileNumber());
 				if(number.getMobileNumber() != null) {
 					String regExp = "(0/91)?[7-9][0-9]{9}";
 					Pattern pattern = Pattern.compile(regExp);
