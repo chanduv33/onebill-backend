@@ -52,7 +52,7 @@ public class ValidateCustomer {
 			for (MobileNumbers number : customer.getPhoneNumbers()) {
 //				System.out.println(number.getMobileNumber());
 				if(number.getMobileNumber() != null) {
-					String regExp = "(0/91)?[7-9][0-9]{9}";
+					String regExp = "(0/91)?[6-9][0-9]{9}";
 					Pattern pattern = Pattern.compile(regExp);
 					Matcher matcher = pattern.matcher(number.getMobileNumber().toString());
 					if(matcher.matches()) {

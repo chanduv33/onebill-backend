@@ -104,15 +104,12 @@ public class CustomerController {
 			throws IOException {
 		CustomerDetails details = new ObjectMapper().readValue(customer, CustomerDetails.class);
 		CustomerDocuments documents = new CustomerDocuments();
-		if (multipartFile.length <= 1 ) {			
+		if (multipartFile.length == 1 ) {			
 			List<String> names = Arrays.asList(fileNames);
-			System.out.println(names.get(0));
 			if (names.get(0).contentEquals("addressProof")) {
-				System.out.println(names.get(0));
 				documents.setAddressProof(multipartFile[0].getBytes());
 				documents.setAddressProofFileName(multipartFile[0].getOriginalFilename());
 			} else if ( names.get(0).contentEquals("idProof")) {
-				System.out.println(names.get(0));
 				documents.setIdentityProof(multipartFile[0].getBytes());
 				documents.setIdentityProofFileName(multipartFile[0].getOriginalFilename());
 			}
